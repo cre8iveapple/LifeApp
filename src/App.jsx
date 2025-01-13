@@ -17,6 +17,8 @@ import { getUrl } from "aws-amplify/storage";
 import { uploadData } from "aws-amplify/storage";
 import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
+import {fetchNotes, createNote, deleteNote} from "./Note.jsx";
+import  {fetchPersons, createPerson, deletePerson} from "./Person.jsx";
 /**
  * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
  */
@@ -27,66 +29,18 @@ const client = generateClient({
 });
 
 export default function App() {
+  
   const [notes, setNotes] = useState([]);
-
   useEffect(() => {
     fetchNotes();
   }, []);
 
-  async function fetchNotes() {
-    const { data: notes } = await client.models.Note.list();
-    await Promise.all(
-      notes.map(async (note) => {
-        if (note.image) {
-          const linkToStorageFile = await getUrl({
-            path: ({ identityId }) => `media/${identityId}/${note.image}`,
-          });
-          console.log(linkToStorageFile.url);
-          note.image = linkToStorageFile.url;
-        }
-        return note;
-      })
-    );
-    console.log(notes);
-    setNotes(notes);
-  }
+  const [persons, setPersons] = useState([]);
+  useEffect(() => {
+    fetchPersons();
+  }, []);
 
-  async function createNote(event) {
-    event.preventDefault();
-    const form = new FormData(event.target);
-    console.log(form.get("image").name);
-
-    const { data: newNote } = await client.models.Note.create({
-      name: form.get("name"),
-      description: form.get("description"),
-      image: form.get("image").name,
-    });
-
-    console.log(newNote);
-    if (newNote.image)
-      if (newNote.image)
-        await uploadData({
-          path: ({ identityId }) => `media/${identityId}/${newNote.image}`,
-
-          data: form.get("image"),
-        }).result;
-
-    fetchNotes();
-    event.target.reset();
-  }
-
-  async function deleteNote({ id }) {
-    const toBeDeletedNote = {
-      id: id,
-    };
-
-    const { data: deletedNote } = await client.models.Note.delete(
-      toBeDeletedNote
-    );
-    console.log(deletedNote);
-
-    fetchNotes();
-  }
+  
 
   return (
     <Authenticator>
@@ -178,7 +132,71 @@ export default function App() {
             ))}
           </Grid>
           <Button onClick={signOut}>Sign Out</Button>
+
+{/* *****************************************************************/}
+
+<Heading level={1}>My filters</Heading>
+          <View as="form" margin="3rem 0" onSubmit={createPerson}>
+            <Flex
+              direction="column"
+              justifyContent="center"
+              gap="2rem"
+              padding="2rem"
+            >
+              <TextField
+                name="filter"
+                placeholder="Person filter"
+                label="Person filter"
+                labelHidden
+                variation="quiet"
+                required
+              />
+            
+              <Button type="submit" variation="primary">
+                Create Person Filter
+              </Button>
+            </Flex>
+          </View>
+          <Divider />
+          <Heading level={2}>Current Filters</Heading>
+          <Grid
+            margin="3rem 0"
+            autoFlow="column"
+            justifyContent="center"
+            gap="2rem"
+            alignContent="center"
+          >
+            {Persons.map((Person) => (
+              <Flex
+                key={Person.id || Person.filter}
+                direction="column"
+                justifyContent="center"
+                alignItems="center"
+                gap="2rem"
+                border="1px solid #ccc"
+                padding="2rem"
+                borderRadius="5%"
+                className="box"
+              >
+                <View>
+                  <Heading level="3">{Person.filter}</Heading>
+                </View>
+                <Button
+                  variation="destructive"
+                  onClick={() => deletePerson(Person)}
+                >
+                  Delete Person
+                </Button>
+              </Flex>
+            ))}
+          </Grid>
+          <Button onClick={signOut}>Sign Out</Button>
+
+
+
+          
         </Flex>
+
       )}
     </Authenticator>
   );

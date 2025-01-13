@@ -8,7 +8,13 @@ const schema = a.schema({
       image: a.string(),
     })
     .authorization((allow) => [allow.owner()]),
-});
+  Person: a
+    .model({
+      filter:a.string(),
+    })
+    .authorization((allow) => [allow.owner()]),
+
+  });
 
 export type Schema = ClientSchema<typeof schema>;
 
