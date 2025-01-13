@@ -35,7 +35,7 @@ export default function App() {
     fetchNotes();
   }, []);
 
-  const [persons, setPersons] = useState([]);
+  const [Persons, setPersons] = useState([]);
   useEffect(() => {
     fetchPersons();
   }, []);
