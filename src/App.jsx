@@ -13,34 +13,26 @@ import {
 } from "@aws-amplify/ui-react";
 import { Amplify } from "aws-amplify";
 import "@aws-amplify/ui-react/styles.css";
-import { getUrl } from "aws-amplify/storage";
 import { uploadData } from "aws-amplify/storage";
-import { generateClient } from "aws-amplify/data";
-import outputs from "../amplify_outputs.json";
-import {fetchNotes, createNote, deleteNote} from "./Note.jsx";
+import { getUrl } from "aws-amplify/storage";
+import  {client} from "./Client"
+import { fetchNotes,createNote, deleteNote } from "./Note.jsx";
 import  {fetchPersons, createPerson, deletePerson} from "./Person.jsx";
-/**
- * @type {import('aws-amplify/data').Client<import('../amplify/data/resource').Schema>}
- */
 
-Amplify.configure(outputs);
-const client = generateClient({
-  authMode: "userPool",
-});
+
 
 export default function App() {
   
-  const [notes, setNotes] = useState([]);
+ const [notes, setNotes] = useState([]);
+ const [Persons, setPersons] = useState([]);
+
   useEffect(() => {
     fetchNotes();
   }, []);
 
-  const [Persons, setPersons] = useState([]);
   useEffect(() => {
     fetchPersons();
   }, []);
-
-  
 
   return (
     <Authenticator>

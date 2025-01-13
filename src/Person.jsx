@@ -1,4 +1,3 @@
-
   async function fetchPersons() {
     const { data: Persons } = await client.models.Person.list();
     await Promise.all(
@@ -36,4 +35,4 @@
     fetchPersons();
   }
 
-  export {fetchPersons, createPerson, deletePerson}
+  export {fetchPersons, createPerson, deletePerson, Persons}

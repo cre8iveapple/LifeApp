@@ -1,4 +1,3 @@
-
   async function fetchNotes() {
     const { data: notes } = await client.models.Note.list();
     await Promise.all(
@@ -54,4 +53,4 @@
     fetchNotes();
   }
 
-  export {fetchNotes, createNote, deleteNote}
+  export {fetchNotes, createNote, deleteNote,  notes, setNotes }
